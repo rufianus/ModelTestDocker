@@ -1,0 +1,67 @@
+<!DOCTYPE = html>
+<html>
+<head>
+  <title>MENGENALI PRODUCT</title>
+</head>
+<script src="http://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+
+<body>
+  <input id="image-selector" type = "file" />
+  <button id="kenali-button">Kenali Gambar</button>
+  <br>
+  <img id="selected-image" height = "300" width = "300" src="" />
+  <br>
+  <p>Predictions</p>
+  <div id="predictionresult"></div>
+</body>
+
+<script type="text/javascript">
+
+  var server = "http://127.0.0.1:5000";
+  let hasil = []
+  let base64Image;
+  $("#image-selector").change(function() {
+    let reader = new FileReader();
+    reader.onload = function(e) {
+      let dataURL = reader.result;
+      $("#selected-image").attr("src", dataURL);
+      base64Image= dataURL.replace("data:image/png;base64,", "");
+    }
+    reader.readAsDataURL($("#image-selector")[0].files[0]);
+    $("#ashbrown-prediction").text("");
+    $("#ashpurple-prediction").text("");
+    $("#dinhlang-prediction").text("");
+    $("#oillanbaby-prediction").text("");
+    $("#oillanmama-prediction").text("");
+    $("#omepros10-prediction").text("");
+    $("#omepros30-prediction").text("");
+    $("#thophuclinh-prediction").text("");
+  });
+
+  $("#kenali-button").click(function(event){
+    let kirim_pesan = {
+	     image: base64Image
+    }
+	  $.post("http://localhost:5000/kenali", JSON.stringify(kirim_pesan), function(response){
+      data = response
+      data = $.parseJSON(data);
+      console.log(data)
+
+      $.each(data['Prediksi'], (i,v)=>{
+        let p = `<p>${i}: ${v}<p>`;
+          $('#predictionresult').append(p);
+          console.log(p)
+      });
+      // let keys = Object.keys(hasil);
+      // keys.forEach((key)=> {
+      //   let value = hasil[key];
+      //
+      //   let p = `<p>${key}: ${value}<p>`;
+      //   $('#predictionresult').append(p);
+      //   console.log(p)
+      // });
+    });
+  });
+
+</script>
+</html>
